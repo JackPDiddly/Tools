@@ -206,9 +206,9 @@ function Write-Log {
 
 
 
-    #region Function Archive-Files
+    #region Function New-FilesArchive
 
-    function Archive-Files {
+    function New-FilesArchive {
 
     <#
     .Synopsis
@@ -217,7 +217,7 @@ function Write-Log {
        Archives PowerShell environment, including all scripts and modules to a ZIP file
     .EXAMPLE
 
-    Archive-Files
+    New-FilesArchive
 
     This example will archive all PowerShell environment into a ZIP file for archival purposes.
 
@@ -256,15 +256,15 @@ function Write-Log {
 
     }
 
-    #endregionn Function Archive-Files
+    #endregionn Function New-FilesArchive
 
 
 
 
 
-    #region Function Deploy-Files
+    #region Function New-FilesDeploy
 
-    function Deploy-Files {
+    function New-FilesDeploy {
 
     <#
     .SYNOPSIS
@@ -292,7 +292,7 @@ function Write-Log {
 
     }
 
-    #endregion Function Deploy-Files
+    #endregion Function New-FilesDeploy
 
 
 
@@ -443,7 +443,7 @@ function Write-Log {
             write-verbose $output
             $output = ($PSBoundParameters | Out-String) | timestamp
             write-verbose $output
-
+<#
             $DHCPServer = "AGNFDLDC05.agn.com"
             $DHCPLocalFile = "C:\Users\karrmann\Desktop\DHCP"
             $DHCPRemoteFile = "\\agnfdldc05.agn.com\c$\users\karrmann\desktop\DHCP"
@@ -452,7 +452,7 @@ function Write-Log {
             $DHCPLocation = "$DRLocation\DHCP"
             $DNSZoneLocation = "$DRLocation\DNS\Exports\ZoneTemp.csv"
             $DNSExportsLocation = "$DRLocation\DNS\Exports"
-            $DNSServer = "AGNFDLDC10P.agn.com"
+            $DNSServer = "AGNFDLDC10P.agn.com"  #>
 
             $Year = Get-date -Format yyyy
             $Month = Get-Date -Format MM
@@ -482,11 +482,14 @@ function Write-Log {
                 write-verbose $output
 
                 # Backup DNS
-                # Pulls an environment variable to find the server name, queries it for a list of zones, filters only the primary ones, removes the quotes from the exported .csv file, and saves it to the specified folder.
+                # Pulls an environment variable to find the server name, queries it for a list of zones,
+                # filters only the primary ones, removes the quotes from the exported .csv file,
+                # and saves it to the specified folder.
+
                 Get-DNSServerZone -ComputerName $DNSServer |
                     Where-Object{$_.ZoneType -eq "Primary"} |
-                    Select ZoneName | ConvertTo-CSV -NoTypeInformation |
-                    ForEach-Object {$_ -replace ‘"‘, ""} |
+                    Select-Object ZoneName | ConvertTo-CSV -NoTypeInformation |
+                    ForEach-Object {$_ -replace '"', ""} |
                     Out-File "$DNSZoneLocation" -Force
 
                 # Imports the zone list
